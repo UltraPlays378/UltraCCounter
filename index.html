@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UltraCCounter</title>
+
+    <!-- iOS Web App / Home Screen App Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="UltraCCounter">
+
+    <!-- App Icon -->
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" sizes="1024x1024" href="icon.png">
+    <link rel="icon" href="icon.png">
+
     <style>
         :root {
             --bg: #0f172a;
@@ -48,7 +59,6 @@
             font-weight: 800;
             min-width: 180px;
             text-align: center;
-            /* Prevents layout jitter by making all digits same width */
             font-variant-numeric: tabular-nums;
             transition: color 0.2s ease;
         }
@@ -88,7 +98,6 @@
             background-color: #64748b;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 480px) {
             .counter-wrapper {
                 padding: 1.5rem;
@@ -106,30 +115,27 @@
         }
     </style>
 </head>
-<body>
 
+<body>
     <main class="counter-wrapper">
-        <!-- Down Button (Middle-Left) -->
         <button id="decrement" class="btn btn-down" aria-label="Decrease">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
         </button>
 
-        <!-- Value (Absolute Center) -->
         <div id="counter" class="count-display">0</div>
 
-        <!-- Up Button (Middle-Right) -->
         <button id="increment" class="btn" aria-label="Increase">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
         </button>
     </main>
 
     <script>
-        /**
-         * UltraCCounter Logic
-         * - Maintains strictly typed integer state
-         * - Updates DOM efficiently
-         */
-        (function() {
+        (function () {
             let count = 0;
             const display = document.getElementById('counter');
             const incBtn = document.getElementById('increment');
@@ -137,39 +143,19 @@
 
             function updateUI() {
                 display.textContent = count;
-                
-                // Visual feedback logic
-                if (count > 0) {
-                    display.style.color = 'var(--success)';
-                } else if (count < 0) {
-                    display.style.color = 'var(--danger)';
-                } else {
-                    display.style.color = 'var(--text)';
-                }
+                if (count > 0) display.style.color = 'var(--success)';
+                else if (count < 0) display.style.color = 'var(--danger)';
+                else display.style.color = 'var(--text)';
             }
 
-            incBtn.addEventListener('click', () => {
-                count++;
-                updateUI();
-            });
+            incBtn.addEventListener('click', () => { count++; updateUI(); });
+            decBtn.addEventListener('click', () => { count--; updateUI(); });
 
-            decBtn.addEventListener('click', () => {
-                count--;
-                updateUI();
-            });
-
-            // Accessibility: Support Keyboard arrows
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowUp') {
-                    count++;
-                    updateUI();
-                } else if (e.key === 'ArrowDown') {
-                    count--;
-                    updateUI();
-                }
+                if (e.key === 'ArrowUp') { count++; updateUI(); }
+                if (e.key === 'ArrowDown') { count--; updateUI(); }
             });
         })();
     </script>
 </body>
 </html>
-
