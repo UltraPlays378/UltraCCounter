@@ -70,6 +70,7 @@ body {
     gap: 2.5rem;
     border: 1px solid rgba(255,255,255,0.1);
     flex-direction: column;
+    position: relative;
 }
 
 .count-display {
@@ -102,17 +103,38 @@ body {
 .btn-down { background-color: #475569; }
 .btn-down:hover { background-color: #64748b; }
 
-#settings {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+/* Gear Icon */
+#gear {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text);
+}
+
+#settings-modal {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    background: var(--card);
+    border-radius: 1rem;
+    padding: 1rem;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+#settings-modal button {
+    width: 100%;
 }
 
 @media (max-width:480px){
     .count-display{font-size:4rem; min-width:120px;}
     .btn{width:60px; height:60px; font-size:1.8rem;}
+    #gear{font-size:1.5rem;}
 }
-
 #updating {
     position: fixed; inset:0;
     background: var(--bg);
@@ -136,17 +158,20 @@ body {
         <button id="increment" class="btn">+</button>
     </div>
 
-    <!-- Settings Panel -->
-    <div id="settings">
+    <!-- Gear Icon -->
+    <div id="gear">⚙️</div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal">
         <button id="toggle-theme" class="btn">Toggle Theme</button>
-        <button id="reset-counter" class="btn btn-down">Reset</button>
+        <button id="reset-counter" class="btn btn-down">Reset Counter</button>
     </div>
 </main>
 
 <script>
 /* 🔁 AUTO UPDATE ENGINE */
 (async function autoUpdate(){
-    const VERSION = "1.0.0"; // bump when you change app
+    const VERSION = "1.0.0"; // bump when updating
     try {
         const res = await fetch(window.location.href, {cache:"no-store"});
         const text = await res.text();
@@ -157,11 +182,13 @@ body {
     }catch(_){}
 })();
 
-/* 🧮 COUNTER WITH PERSISTENCE */
+/* 🧮 COUNTER + SETTINGS PERSISTENCE */
 (function(){
     let count = Number(localStorage.getItem('counter')||0);
     const display = document.getElementById('counter');
     const body = document.body;
+    const modal = document.getElementById('settings-modal');
+    const gear = document.getElementById('gear');
 
     function updateUI(){
         display.textContent=count;
@@ -178,10 +205,9 @@ body {
         count=0; updateUI();
     };
 
-    /* Theme toggle persistence */
+    // Theme toggle
     const currentTheme = localStorage.getItem('theme')||'dark';
     if(currentTheme==='light'){body.style.background='#f8fafc'; body.style.color='#0f172a';}
-
     document.getElementById('toggle-theme').onclick=()=>{
         if(body.style.background==='var(--bg)' || body.style.background===''){
             body.style.background='#f8fafc'; body.style.color='#0f172a';
@@ -192,7 +218,16 @@ body {
         }
     };
 
-    /* Initial render */
+    // Gear toggle modal
+    gear.onclick=()=>{ modal.style.display = modal.style.display==='flex'?'none':'flex'; };
+
+    // Click outside modal closes it
+    document.addEventListener('click', e=>{
+        if(!modal.contains(e.target) && !gear.contains(e.target)){
+            modal.style.display='none';
+        }
+    });
+
     updateUI();
 })();
 </script>
