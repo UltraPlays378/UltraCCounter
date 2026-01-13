@@ -2,15 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🔒 Disable zooming -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>UltraCCounter</title>
 
-    <!-- iOS Web App / Home Screen App Settings -->
+    <!-- 📱 iOS App Mode -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="UltraCCounter">
 
-    <!-- App Icon -->
+    <!-- 🚫 Cache Control (CRITICAL FOR AUTO UPDATE) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- 🖼 App Icon -->
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="apple-touch-icon" sizes="1024x1024" href="icon.png">
     <link rel="icon" href="icon.png">
@@ -30,16 +39,23 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            height: 100%;
+            touch-action: manipulation;
+            overscroll-behavior: none;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             overflow: hidden;
         }
 
@@ -76,14 +92,7 @@
             justify-content: center;
             align-items: center;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            user-select: none;
             -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
         }
 
         .btn:active {
@@ -92,10 +101,6 @@
 
         .btn-down {
             background-color: #475569;
-        }
-        
-        .btn-down:hover {
-            background-color: #64748b;
         }
 
         @media (max-width: 480px) {
@@ -113,49 +118,70 @@
                 font-size: 1.8rem;
             }
         }
+
+        /* 🔄 Update overlay */
+        #updating {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            color: var(--text);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            z-index: 999;
+        }
     </style>
 </head>
 
 <body>
-    <main class="counter-wrapper">
-        <button id="decrement" class="btn btn-down" aria-label="Decrease">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-        </button>
+<div id="updating">Updating…</div>
 
-        <div id="counter" class="count-display">0</div>
+<main class="counter-wrapper">
+    <button id="decrement" class="btn btn-down">−</button>
+    <div id="counter" class="count-display">0</div>
+    <button id="increment" class="btn">+</button>
+</main>
 
-        <button id="increment" class="btn" aria-label="Increase">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-        </button>
-    </main>
+<script>
+/* 🔁 AUTO UPDATE ENGINE */
+(async function autoUpdate() {
+    const VERSION = "1.0.0"; // 🔼 change this whenever you update
 
-    <script>
-        (function () {
-            let count = 0;
-            const display = document.getElementById('counter');
-            const incBtn = document.getElementById('increment');
-            const decBtn = document.getElementById('decrement');
+    try {
+        const res = await fetch(window.location.href, { cache: "no-store" });
+        const text = await res.text();
 
-            function updateUI() {
-                display.textContent = count;
-                if (count > 0) display.style.color = 'var(--success)';
-                else if (count < 0) display.style.color = 'var(--danger)';
-                else display.style.color = 'var(--text)';
-            }
+        if (!text.includes(`VERSION = "${VERSION}"`)) {
+            document.getElementById("updating").style.display = "flex";
+            setTimeout(() => location.reload(true), 300);
+        }
+    } catch (_) {}
+})();
 
-            incBtn.addEventListener('click', () => { count++; updateUI(); });
-            decBtn.addEventListener('click', () => { count--; updateUI(); });
+/* 🧮 COUNTER LOGIC */
+(function () {
+    let count = 0;
+    const display = document.getElementById('counter');
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowUp') { count++; updateUI(); }
-                if (e.key === 'ArrowDown') { count--; updateUI(); }
-            });
-        })();
-    </script>
+    function updateUI() {
+        display.textContent = count;
+        display.style.color =
+            count > 0 ? 'var(--success)' :
+            count < 0 ? 'var(--danger)' :
+            'var(--text)';
+    }
+
+    document.getElementById('increment').onclick = () => {
+        count++;
+        updateUI();
+    };
+
+    document.getElementById('decrement').onclick = () => {
+        count--;
+        updateUI();
+    };
+})();
+</script>
 </body>
 </html>
