@@ -1,186 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <!-- 🔒 Disable zooming -->
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- iOS Zoom Lock -->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>UltraCCounter</title>
+<title>UltraCCounter</title>
 
-    <!-- 📱 iOS App Mode -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="UltraCCounter">
+<!-- iOS App Mode -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="UltraCCounter">
 
-    <!-- 🚫 Cache Control (CRITICAL FOR AUTO UPDATE) -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
+<!-- Cache Bust -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
-    <!-- 🖼 App Icon -->
-    <link rel="apple-touch-icon" href="icon.png">
-    <link rel="apple-touch-icon" sizes="1024x1024" href="icon.png">
-    <link rel="icon" href="icon.png">
+<!-- Icons -->
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="apple-touch-icon" sizes="1024x1024" href="icon.png">
+<link rel="icon" href="icon.png">
 
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --danger: #ef4444;
-            --success: #22c55e;
-        }
+<style>
+:root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f8fafc;
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --danger: #ef4444;
+    --success: #22c55e;
+}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-user-select: none;
-            user-select: none;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+}
 
-        html, body {
-            height: 100%;
-            touch-action: manipulation;
-            overscroll-behavior: none;
-        }
+html, body {
+    height: 100%;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+}
 
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
+}
 
-        .counter-wrapper {
-            background-color: var(--card);
-            padding: 3rem;
-            border-radius: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 2.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+.counter-wrapper {
+    background-color: var(--card);
+    padding: 3rem;
+    border-radius: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    flex-direction: column;
+}
 
-        .count-display {
-            font-size: 6rem;
-            font-weight: 800;
-            min-width: 180px;
-            text-align: center;
-            font-variant-numeric: tabular-nums;
-            transition: color 0.2s ease;
-        }
+.count-display {
+    font-size: 6rem;
+    font-weight: 800;
+    min-width: 180px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.2s ease;
+}
 
-        .btn {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: none;
-            background-color: var(--primary);
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            -webkit-tap-highlight-color: transparent;
-        }
+.btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--primary);
+    color: white;
+    font-size: 2.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+    -webkit-tap-highlight-color: transparent;
+    margin: 5px;
+}
 
-        .btn:active {
-            transform: scale(0.9);
-        }
+.btn:active { transform: scale(0.9); }
+.btn-down { background-color: #475569; }
+.btn-down:hover { background-color: #64748b; }
 
-        .btn-down {
-            background-color: #475569;
-        }
+#settings {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
 
-        @media (max-width: 480px) {
-            .counter-wrapper {
-                padding: 1.5rem;
-                gap: 1rem;
-            }
-            .count-display {
-                font-size: 4rem;
-                min-width: 120px;
-            }
-            .btn {
-                width: 60px;
-                height: 60px;
-                font-size: 1.8rem;
-            }
-        }
+@media (max-width:480px){
+    .count-display{font-size:4rem; min-width:120px;}
+    .btn{width:60px; height:60px; font-size:1.8rem;}
+}
 
-        /* 🔄 Update overlay */
-        #updating {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            color: var(--text);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-            z-index: 999;
-        }
-    </style>
+#updating {
+    position: fixed; inset:0;
+    background: var(--bg);
+    color: var(--text);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    font-size:1.2rem;
+    z-index:999;
+}
+</style>
 </head>
 
 <body>
 <div id="updating">Updating…</div>
 
 <main class="counter-wrapper">
-    <button id="decrement" class="btn btn-down">−</button>
-    <div id="counter" class="count-display">0</div>
-    <button id="increment" class="btn">+</button>
+    <div>
+        <button id="decrement" class="btn btn-down">−</button>
+        <span id="counter" class="count-display">0</span>
+        <button id="increment" class="btn">+</button>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings">
+        <button id="toggle-theme" class="btn">Toggle Theme</button>
+        <button id="reset-counter" class="btn btn-down">Reset</button>
+    </div>
 </main>
 
 <script>
 /* 🔁 AUTO UPDATE ENGINE */
-(async function autoUpdate() {
-    const VERSION = "1.0.0"; // 🔼 change this whenever you update
-
+(async function autoUpdate(){
+    const VERSION = "1.0.0"; // bump when you change app
     try {
-        const res = await fetch(window.location.href, { cache: "no-store" });
+        const res = await fetch(window.location.href, {cache:"no-store"});
         const text = await res.text();
-
-        if (!text.includes(`VERSION = "${VERSION}"`)) {
-            document.getElementById("updating").style.display = "flex";
-            setTimeout(() => location.reload(true), 300);
+        if(!text.includes(`VERSION = "${VERSION}"`)){
+            document.getElementById("updating").style.display="flex";
+            setTimeout(()=>location.reload(true),300);
         }
-    } catch (_) {}
+    }catch(_){}
 })();
 
-/* 🧮 COUNTER LOGIC */
-(function () {
-    let count = 0;
+/* 🧮 COUNTER WITH PERSISTENCE */
+(function(){
+    let count = Number(localStorage.getItem('counter')||0);
     const display = document.getElementById('counter');
+    const body = document.body;
 
-    function updateUI() {
-        display.textContent = count;
-        display.style.color =
-            count > 0 ? 'var(--success)' :
-            count < 0 ? 'var(--danger)' :
-            'var(--text)';
+    function updateUI(){
+        display.textContent=count;
+        localStorage.setItem('counter', count);
+        display.style.color=
+            count>0?'var(--success)':
+            count<0?'var(--danger)':'var(--text)';
     }
 
-    document.getElementById('increment').onclick = () => {
-        count++;
-        updateUI();
+    document.getElementById('increment').onclick=()=>{ count++; updateUI(); };
+    document.getElementById('decrement').onclick=()=>{ count--; updateUI(); };
+
+    document.getElementById('reset-counter').onclick=()=>{
+        count=0; updateUI();
     };
 
-    document.getElementById('decrement').onclick = () => {
-        count--;
-        updateUI();
+    /* Theme toggle persistence */
+    const currentTheme = localStorage.getItem('theme')||'dark';
+    if(currentTheme==='light'){body.style.background='#f8fafc'; body.style.color='#0f172a';}
+
+    document.getElementById('toggle-theme').onclick=()=>{
+        if(body.style.background==='var(--bg)' || body.style.background===''){
+            body.style.background='#f8fafc'; body.style.color='#0f172a';
+            localStorage.setItem('theme','light');
+        }else{
+            body.style.background='var(--bg)'; body.style.color='var(--text)';
+            localStorage.setItem('theme','dark');
+        }
     };
+
+    /* Initial render */
+    updateUI();
 })();
 </script>
 </body>
