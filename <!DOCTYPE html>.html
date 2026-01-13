@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraCCounter</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .counter-wrapper {
+            background-color: var(--card);
+            padding: 3rem;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .count-display {
+            font-size: 6rem;
+            font-weight: 800;
+            min-width: 180px;
+            text-align: center;
+            /* Prevents layout jitter by making all digits same width */
+            font-variant-numeric: tabular-nums;
+            transition: color 0.2s ease;
+        }
+
+        .btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: scale(0.9);
+        }
+
+        .btn-down {
+            background-color: #475569;
+        }
+        
+        .btn-down:hover {
+            background-color: #64748b;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .counter-wrapper {
+                padding: 1.5rem;
+                gap: 1rem;
+            }
+            .count-display {
+                font-size: 4rem;
+                min-width: 120px;
+            }
+            .btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="counter-wrapper">
+        <!-- Down Button (Middle-Left) -->
+        <button id="decrement" class="btn btn-down" aria-label="Decrease">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+
+        <!-- Value (Absolute Center) -->
+        <div id="counter" class="count-display">0</div>
+
+        <!-- Up Button (Middle-Right) -->
+        <button id="increment" class="btn" aria-label="Increase">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+    </main>
+
+    <script>
+        /**
+         * UltraCCounter Logic
+         * - Maintains strictly typed integer state
+         * - Updates DOM efficiently
+         */
+        (function() {
+            let count = 0;
+            const display = document.getElementById('counter');
+            const incBtn = document.getElementById('increment');
+            const decBtn = document.getElementById('decrement');
+
+            function updateUI() {
+                display.textContent = count;
+                
+                // Visual feedback logic
+                if (count > 0) {
+                    display.style.color = 'var(--success)';
+                } else if (count < 0) {
+                    display.style.color = 'var(--danger)';
+                } else {
+                    display.style.color = 'var(--text)';
+                }
+            }
+
+            incBtn.addEventListener('click', () => {
+                count++;
+                updateUI();
+            });
+
+            decBtn.addEventListener('click', () => {
+                count--;
+                updateUI();
+            });
+
+            // Accessibility: Support Keyboard arrows
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowUp') {
+                    count++;
+                    updateUI();
+                } else if (e.key === 'ArrowDown') {
+                    count--;
+                    updateUI();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
+
